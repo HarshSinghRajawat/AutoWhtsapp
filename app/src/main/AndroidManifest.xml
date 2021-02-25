@@ -18,10 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".services.TestService"
-            android:exported="false"
-            android:enabled="true"/>
-        <service android:name=".services.SendMessage"
+
+        <service android:name=".services.SendMessageAccessibility"
             android:enabled="true" android:exported="false"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <meta-data
