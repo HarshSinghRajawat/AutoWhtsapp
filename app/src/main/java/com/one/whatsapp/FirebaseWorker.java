@@ -15,6 +15,8 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.one.whatsapp.services.SendMessage;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -22,9 +24,11 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 public class FirebaseWorker extends Worker {
 
-
+    Context thisContext;
     public FirebaseWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+
         super(context, workerParams);
+        thisContext=context;
     }
     private AsyncTask mTask;
 
@@ -40,6 +44,7 @@ public class FirebaseWorker extends Worker {
             @Override
             protected Object doInBackground(Object[] objects) {
                 Log.i("FirebaseWorker: ","Inside AsyncTack");
+
 
                 return null;
             }

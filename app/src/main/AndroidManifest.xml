@@ -10,16 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Whatsapp">
 
-        <service android:name=".WhatsappAccessibility"
-            android:label="My Whatsapp Accessibility"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-
-            <intent-filter>
-                <action
-                    android:name="ancroid.accessibilityservice.AccessibilityService"/>
-            </intent-filter>
-        </service>
-
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -28,6 +18,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".services.TestService"
+            android:exported="false"
+            android:enabled="true"/>
+        <service android:name=".services.SendMessage"
+            android:enabled="true" android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/global_action_bar_service" />
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+
+        </service>
     </application>
 
 </manifest>

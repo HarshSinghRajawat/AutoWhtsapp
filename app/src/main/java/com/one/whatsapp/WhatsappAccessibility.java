@@ -1,6 +1,7 @@
 package com.one.whatsapp;
 
 import android.accessibilityservice.AccessibilityService;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -10,9 +11,11 @@ import java.util.List;
 
 public class WhatsappAccessibility extends AccessibilityService {
 
+
     @Override
     public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
         if(getRootInActiveWindow()==null){
+
             return;
         }
 
