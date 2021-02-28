@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                 Editable number=text.getText();
 
 
-                String num="+91"+number;
+                String num=""+number;
                 String text="This is From Java AsyncTask"+" . ";
                 if (true)
                 {
@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //WorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(FirebaseWorker.class).build();WorkManager.getInstance().enqueue(uploadWorkRequest);
-;
             }
         });
 
