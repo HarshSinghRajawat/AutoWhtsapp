@@ -32,10 +32,13 @@ public class SendMessageAccessibility extends AccessibilityService {
         Log.i(TAG,"Service Running ");
 
 
+
+
+        if(accessibilityEvent.getPackageName().toString().equals("com.whatsapp")) {
+
+        Log.i(TAG, "" + accessibilityEvent.describeContents());
         if(accessibilityEvent.getEventType()==AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
 
-
-            if(accessibilityEvent.getPackageName().toString().equals("com.whatsapp")) {
 
 
                 try {
@@ -43,10 +46,14 @@ public class SendMessageAccessibility extends AccessibilityService {
                     AccessibilityNodeInfoCompat rootNodeInfo = AccessibilityNodeInfoCompat.wrap(getRootInActiveWindow());
                     Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("Sahil"));
                     Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("ACC Project"));
-                    Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("Temp"));
+                    Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("ACC -Core Team (2nd Year)"));
+
                     boolean check = false;
                     //AccessibilityNodeInfo action = accessibilityEvent.getSource();
                     List<AccessibilityNodeInfoCompat> AccProject = rootNodeInfo.findAccessibilityNodeInfosByText("ACC Project");
+                    performGlobalAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
+                    performGlobalAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);
+
 
                     int i = 0;
                     while (i <= 3){
@@ -69,7 +76,9 @@ public class SendMessageAccessibility extends AccessibilityService {
                 }
                 ///////////////////////////////////////////////////////////*/
 
+
                 //get edit text
+
                 List<AccessibilityNodeInfoCompat> messageNodeList= rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/entry");
 
                 if (messageNodeList==null||messageNodeList.isEmpty()) {
@@ -96,7 +105,7 @@ public class SendMessageAccessibility extends AccessibilityService {
                     return;
                 }
                 //press button
-                sendMessage.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                //sendMessage.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 Log.i(TAG, "Button Pressed:"+sendMessage);
 
 
