@@ -1,137 +1,99 @@
 package com.one.whatsapp;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.work.Data;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
-import android.content.pm.PackageManager;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.text.Editable;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ListView;
 
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    int hr=100,min=100,sec=100,days=1;
-    String time_of_exe;
+private String user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        EditText text=(EditText) findViewById(R.id.getNum);
-        EditText text2=(EditText) findViewById(R.id.getText);
-        Button btn=(Button)findViewById(R.id.button);
-        Button set=(Button)findViewById(R.id.set);
-        DatabaseReference ref= FirebaseDatabase.getInstance().getReference().child("Data").child("User");
 
 
+        WifiManager wifiMan = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInf = wifiMan.getConnectionInfo();
+        int ipAddress = wifiInf.getIpAddress();
+        user = String.format("%d-%d-%d-%d", (ipAddress & 0xff),(ipAddress >> 8 & 0xff),(ipAddress >> 16 & 0xff),(ipAddress >> 24 & 0xff));
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        DatabaseReference ref=FirebaseDatabase.getInstance().getReference().child("Users").child("Data").child(user);
+        ListView list=findViewById(R.id.list);
+        //Loading
+        ProgressDialog progressDialog=new ProgressDialog(MainActivity.this);
+        progressDialog.show();
+        progressDialog.setContentView(R.layout.loading);
+        progressDialog.getWindow().setBackgroundDrawableResource(
+                android.R.color.transparent
+        );
 
 
-        set.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TimePickerDialog picker=TimePickerDialog.newInstance(
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-                                hr=hourOfDay;
-                                min=minute;
-                                sec=second;
-                                time_of_exe =hr+":"+min+":"+sec+":";
-                            }
-                        },false
-                );
-                picker.show(getSupportFragmentManager(),"DatePickerDialog");
-            }
+        List<Task> Promo_Data=new ArrayList<>();
+        Adapter adapter=new Adapter(this,R.layout.custom_layout,Promo_Data);
+        list.setAdapter(adapter);
+
+        FloatingActionButton button =  findViewById(R.id.Click);
+        progressDialog.dismiss();
+        button.setOnClickListener(view -> {
+            Intent i = new Intent(MainActivity.this,AddTask.class);
+            i.putExtra("user",user);
+            startActivity(i);
         });
-
-        btn.setOnClickListener(new View.OnClickListener() {
+        ChildEventListener mChildEventListener =new ChildEventListener() {
             @Override
-            public void onClick(View view) {
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Task data=snapshot.getValue(Task.class);
+                adapter.add(data);
 
-
-                Editable msg=text2.getText();
-                Editable number=text.getText();
-                long flexTime=CalculateFlex(hr,min,sec,days);
-
-                String num="+91"+number.toString();
-                String text=msg.toString()+".  ";
-                boolean installed = isAppInstalled("com.whatsapp");
-
-                if (installed)
-                {
-
-                    Data data=new Data.Builder()
-                            .putString("number",num)
-                            .putString("Text",text)
-                            .putString("time", time_of_exe)
-                            .build();
-                    PeriodicWorkRequest sendMessage=new PeriodicWorkRequest.Builder(WhatsAppWorker.class
-                            ,days,TimeUnit.DAYS,flexTime,TimeUnit.MILLISECONDS).setInputData(data)
-                            .addTag("PeriodicWorker")
-                            .build();
-
-                    WorkManager.getInstance(getApplicationContext()).enqueueUniquePeriodicWork("PeriodicWorker",
-                            ExistingPeriodicWorkPolicy.REPLACE,sendMessage);
-                    ref.child(time_of_exe).setValue(new Task(num,text, time_of_exe,"Pending"));
-                    Toast.makeText(MainActivity.this,"Work_Request_Sent",Toast.LENGTH_SHORT).show();/*
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-
-                    try {
-                        intent.setData(Uri.parse("http://api.whatsapp.com/send?phone="+num+"&text="+ URLEncoder.encode(text,"UTF-8")));
-                        intent.setPackage("com.whatsapp");
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getApplicationContext().startActivity(intent);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }*/
-
-                }
-                else
-                {
-                    Toast.makeText(MainActivity.this, "Whatsapp is not installed!", Toast.LENGTH_SHORT).show();
-                }
-                //WorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(FirebaseWorker.class).build();WorkManager.getInstance().enqueue(uploadWorkRequest);
             }
-        });
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Task data=snapshot.getValue(Task.class);
+                adapter.add(data);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                Task data=snapshot.getValue(Task.class);
+                adapter.add(data);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        ref.addChildEventListener(mChildEventListener);
     }
-    private long CalculateFlex(int hour, int minute, int second, int periodInDays){
-        Calendar call=Calendar.getInstance();
-        call.set(Calendar.HOUR_OF_DAY,hour);
-        call.set(Calendar.MINUTE,minute);
-        call.set(Calendar.SECOND,second);
-
-        Calendar Cal2=Calendar.getInstance();
-        if(Cal2.getTimeInMillis()<call.getTimeInMillis()){
-            Cal2.setTimeInMillis(Cal2.getTimeInMillis()+ TimeUnit.DAYS.toMillis(periodInDays));
-        }
-        long delta=(Cal2.getTimeInMillis() - call.getTimeInMillis());
-
-        return ((delta> PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS)?delta:PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS);
-    }
-    private boolean isAppInstalled(String s) {
-        PackageManager packageManager = getPackageManager();
-        boolean is_installed;
-
-        try {
-            packageManager.getPackageInfo(s, PackageManager.GET_ACTIVITIES);
-            is_installed = true;
-        } catch (PackageManager.NameNotFoundException e) {
-            is_installed = false;
-            e.printStackTrace();
-        }
-        return is_installed;
-    }
-
-
 }

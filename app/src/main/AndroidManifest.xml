@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.one.whatsapp">
 
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Whatsapp">
-
+        <activity android:name=".AddTask" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -19,16 +22,18 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.SendMessageAccessibility"
-            android:enabled="true" android:exported="false"
+        <service
+            android:name=".services.SendMessageAccessibility"
+            android:enabled="true"
+            android:exported="false"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/global_action_bar_service" />
+
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
-
         </service>
     </application>
 
