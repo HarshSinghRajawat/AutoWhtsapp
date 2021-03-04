@@ -12,10 +12,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.List;
+
 public class Adapter extends ArrayAdapter<Task> {
 
-    public Adapter(@NonNull Context context, int resource) {
-        super(context, resource);
+    public Adapter(@NonNull Context context, int resource, List<Task> objects) {
+        super(context, resource,objects);
     }
 
 

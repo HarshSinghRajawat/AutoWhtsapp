@@ -111,10 +111,11 @@ public class SendMessageAccessibility extends AccessibilityService {
                 Log.i(TAG, "Button Pressed:"+sendMessage);
                 Thread.sleep(200);
                 performGlobalAction(GLOBAL_ACTION_BACK);
+                Thread.sleep(200);
+                performGlobalAction(GLOBAL_ACTION_HOME);
                 } catch (InterruptedException e) {
                     Log.i(TAG,e+"");
                 }
-                performGlobalAction(GLOBAL_ACTION_HOME);
             //}
         }
     }

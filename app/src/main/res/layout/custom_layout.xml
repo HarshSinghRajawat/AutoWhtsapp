@@ -41,13 +41,13 @@ android:orientation="horizontal">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="@string/status" />
+            android:text="Status :  " />
         <TextView
             android:id="@+id/status"
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             />
     </LinearLayout>
 
