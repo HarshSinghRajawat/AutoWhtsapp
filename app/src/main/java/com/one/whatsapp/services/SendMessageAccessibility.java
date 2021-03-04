@@ -11,10 +11,13 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import androidx.annotation.RequiresApi;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
 
 public class SendMessageAccessibility extends AccessibilityService {
-    String TAG="Test";
+    String TAG="AccessibilityService: ";
     @Override
     public void onCreate() {
         Log.i(TAG,"Service Started");
@@ -37,13 +40,14 @@ public class SendMessageAccessibility extends AccessibilityService {
         if(accessibilityEvent.getPackageName().toString().equals("com.whatsapp")) {
 
         Log.i(TAG, "" + accessibilityEvent.describeContents());
-        if(accessibilityEvent.getEventType()==AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+        //if(accessibilityEvent.getEventType()==AccessibilityEvent.) {
 
 
 
                 try {
-                    Thread.sleep(200);
+                    //Thread.sleep(200);
                     AccessibilityNodeInfoCompat rootNodeInfo = AccessibilityNodeInfoCompat.wrap(getRootInActiveWindow());
+                    /*
                     Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("Sahil"));
                     Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("ACC Project"));
                     Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("ACC -Core Team (2nd Year)"));
@@ -60,7 +64,7 @@ public class SendMessageAccessibility extends AccessibilityService {
                         i++;
                         performGlobalAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_PAGE_DOWN.getId());
                 }
-                /*///////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////
 
                 while (!check) {
                     //List<AccessibilityNodeInfoCompat> AccProject = rootNodeInfo.findAccessibilityNodeInfosByText("ACC -Core Team (2nd Year)");
@@ -75,9 +79,8 @@ public class SendMessageAccessibility extends AccessibilityService {
 
                 }
                 ///////////////////////////////////////////////////////////*/
-
-
                 //get edit text
+
 
                 List<AccessibilityNodeInfoCompat> messageNodeList= rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/entry");
 
@@ -87,7 +90,7 @@ public class SendMessageAccessibility extends AccessibilityService {
                 }
                 Log.i(TAG,"MsgField Found!");
                 AccessibilityNodeInfoCompat messageField=messageNodeList.get(0);
-                if(messageField == null|| messageField.getText().length()==0||!messageField.getText().toString().endsWith(" . ")) {
+                if(messageField == null|| messageField.getText().length()==0||!messageField.getText().toString().endsWith(".  ")) {
                     Log.i(TAG,"Automation Not Required!");
                     return;
                 }
@@ -105,16 +108,15 @@ public class SendMessageAccessibility extends AccessibilityService {
                     return;
                 }
                 //press button
-                //sendMessage.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                sendMessage.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 Log.i(TAG, "Button Pressed:"+sendMessage);
-
-
-                    Thread.sleep(200);
+                Thread.sleep(200);
+                performGlobalAction(GLOBAL_ACTION_BACK);
                 } catch (InterruptedException e) {
                     Log.i(TAG,e+"");
                 }
                 performGlobalAction(GLOBAL_ACTION_HOME);
-            }
+            //}
         }
     }
 
