@@ -6,11 +6,9 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -37,66 +35,57 @@ public class AddTask extends AppCompatActivity {
 
 
 
-        set.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TimePickerDialog picker=TimePickerDialog.newInstance(
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-                                hr=hourOfDay;
-                                min=minute;
-                                sec=second;
-                                time_of_exe =hr+":"+min+":"+sec+":";
-                            }
-                        },false
-                );
-                picker.show(getSupportFragmentManager(),"DatePickerDialog");
-            }
+        set.setOnClickListener(view -> {
+            TimePickerDialog picker=TimePickerDialog.newInstance(
+                    (view1, hourOfDay, minute, second) -> {
+                        hr=hourOfDay;
+                        min=minute;
+                        sec=second;
+                        time_of_exe =hr+":"+min+":"+sec+":";
+                    },false
+            );
+            picker.show(getSupportFragmentManager(),"DatePickerDialog");
         });
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        btn.setOnClickListener(view -> {
 
-                Editable msg = text2.getText();
-                Editable number = text.getText();
-                long flexTime = CalculateFlex(hr, min, sec, days);
+            Editable msg = text2.getText();
+            Editable number = text.getText();
+            long flexTime = CalculateFlex(hr, min, sec, days);
 
-                String num = number.toString();
-                String text = msg.toString() ;
+            String num = number.toString();
+            String text1 = msg.toString() ;
 
-                if((hr!=100&&sec!=100)&&(!num.isEmpty()&&!text.isEmpty())){
-                boolean installed = isAppInstalled("com.whatsapp");
+            if((hr!=100&&sec!=100)&&(!num.isEmpty()&&!text1.isEmpty())){
+            boolean installed = isAppInstalled("com.whatsapp");
 
-                if (installed) {
+            if (installed) {
 
-                    Data data = new Data.Builder()
-                            .putString("number", "+91"+num)
-                            .putString("Text", text+ ".  ")
-                            .putString("time", time_of_exe)
-                            .putString("user",getIntent().getSerializableExtra("user").toString())
-                            .build();
-                    PeriodicWorkRequest sendMessage = new PeriodicWorkRequest.Builder(WhatsAppWorker.class
-                            , days, TimeUnit.DAYS, flexTime, TimeUnit.MILLISECONDS).setInputData(data)
-                            .addTag("PeriodicWorker")
-                            .build();
+                Data data = new Data.Builder()
+                        .putString("number", "+91"+num)
+                        .putString("Text", text1 + ".  ")
+                        .putString("time", time_of_exe)
+                        .putString("user",getIntent().getSerializableExtra("user").toString())
+                        .build();
+                PeriodicWorkRequest sendMessage = new PeriodicWorkRequest.Builder(WhatsAppWorker.class
+                        , days, TimeUnit.DAYS, flexTime, TimeUnit.MILLISECONDS).setInputData(data)
+                        .addTag("PeriodicWorker")
+                        .build();
 
-                    WorkManager.getInstance(getApplicationContext()).enqueueUniquePeriodicWork("PeriodicWorker",
-                            ExistingPeriodicWorkPolicy.REPLACE, sendMessage);
+                WorkManager.getInstance(getApplicationContext()).enqueueUniquePeriodicWork("PeriodicWorker",
+                        ExistingPeriodicWorkPolicy.REPLACE, sendMessage);
 
-                    ref.child(time_of_exe).setValue(new Task(num, text, time_of_exe, "Pending"));
-                    Toast.makeText(AddTask.this, "Work_Request_Sent", Toast.LENGTH_SHORT).show();
-                    finish();
+                ref.child(time_of_exe).setValue(new Task(num, text1, time_of_exe, "Pending"));
+                Toast.makeText(AddTask.this, "Work_Request_Sent", Toast.LENGTH_SHORT).show();
+                finish();
 
-                } else {
-                    Toast.makeText(AddTask.this, "WhatsApp is not installed!", Toast.LENGTH_SHORT).show();
-                }
-                //WorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(FirebaseWorker.class).build();WorkManager.getInstance().enqueue(uploadWorkRequest);
+            } else {
+                Toast.makeText(AddTask.this, "WhatsApp is not installed!", Toast.LENGTH_SHORT).show();
             }
-                else{
-                    Toast.makeText(AddTask.this,"Please Give Valid Data",Toast.LENGTH_SHORT).show();
-                }
+            //WorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(FirebaseWorker.class).build();WorkManager.getInstance().enqueue(uploadWorkRequest);
+        }
+            else{
+                Toast.makeText(AddTask.this,"Please Give Valid Data",Toast.LENGTH_SHORT).show();
             }
         });
     }
