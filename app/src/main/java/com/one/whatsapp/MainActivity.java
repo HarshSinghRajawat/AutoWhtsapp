@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         EditText text2=(EditText) findViewById(R.id.getText);
         Button btn=(Button)findViewById(R.id.button);
         Button set=(Button)findViewById(R.id.set);
-        DatabaseReference ref= FirebaseDatabase.getInstance().getReference().child("Data").child("User");
+        DatabaseReference ref= FirebaseDatabase.getInstance().getReference().child("Users").child("Data");
 
 
 

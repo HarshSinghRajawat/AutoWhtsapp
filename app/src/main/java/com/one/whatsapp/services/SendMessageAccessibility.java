@@ -39,7 +39,6 @@ public class SendMessageAccessibility extends AccessibilityService {
 
         if(accessibilityEvent.getPackageName().toString().equals("com.whatsapp")) {
 
-        Log.i(TAG, "" + accessibilityEvent.describeContents());
         //if(accessibilityEvent.getEventType()==AccessibilityEvent.) {
 
 
@@ -123,14 +122,13 @@ public class SendMessageAccessibility extends AccessibilityService {
     @Override
     public void onInterrupt()
     {
-        Log.v(TAG, "***** onInterrupt");
+        Log.v(TAG, "Service onInterrupt");
     }
 
     @Override
     public void onServiceConnected()
     {
-        Log.v(TAG, "***** onServiceConnected");
-
+        Log.v(TAG, "Service onServiceConnected");
         AccessibilityServiceInfo info = new AccessibilityServiceInfo();
         info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
         info.notificationTimeout = 100;

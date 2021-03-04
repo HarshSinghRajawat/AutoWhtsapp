@@ -27,7 +27,7 @@ public class WhatsAppWorker extends Worker {
 
         Intent AccessibilityService=new Intent(getApplicationContext(), SendMessageAccessibility.class);
 
-        DatabaseReference ref= FirebaseDatabase.getInstance().getReference().child("Data").child("User");
+        DatabaseReference ref= FirebaseDatabase.getInstance().getReference().child("Users").child("Data");
         getApplicationContext().startService(AccessibilityService);
         String text=getInputData().getString("Text");
         String num=getInputData().getString("number");
