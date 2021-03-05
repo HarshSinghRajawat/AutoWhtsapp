@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -20,7 +21,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.one.whatsapp.services.SendMessageAccessibility;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,9 +64,11 @@ private String user;
         FloatingActionButton button =  findViewById(R.id.Click);
         progressDialog.dismiss();
         button.setOnClickListener(view -> {
+
             Intent i = new Intent(MainActivity.this,AddTask.class);
             i.putExtra("user",user);
             startActivity(i);
+
         });
         ChildEventListener mChildEventListener =new ChildEventListener() {
             @Override
@@ -95,5 +101,26 @@ private String user;
             }
         };
         ref.addChildEventListener(mChildEventListener);
+    }
+
+    private void sendDirect(String num,String text){
+        Intent AccessibilityService=new Intent(getApplicationContext(), SendMessageAccessibility.class);
+        AccessibilityService.putExtra("msg",text);
+        AccessibilityService.putExtra("boolean",true);
+        startService(AccessibilityService);
+
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        try {
+            intent.setData(Uri.parse("http://api.whatsapp.com/send?phone="+num+"&text="+ URLEncoder.encode(text,"UTF-8")));
+            intent.setPackage("com.whatsapp");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
 }

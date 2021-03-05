@@ -21,21 +21,16 @@
         </ListView>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="310dp"
-        >
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/Click"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:layout_marginLeft="500dp"
         app:fabSize="normal"
         android:elevation="6dp"
         android:src="@drawable/ic_baseline_library_add_24"
-        /></LinearLayout>
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

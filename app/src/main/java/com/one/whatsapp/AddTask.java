@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
@@ -29,11 +30,10 @@ public class AddTask extends AppCompatActivity {
         setContentView(R.layout.activity_add_task);
         EditText text=(EditText) findViewById(R.id.getNum);
         EditText text2=(EditText) findViewById(R.id.getText);
-        Button btn=(Button)findViewById(R.id.button);
-        Button set=(Button)findViewById(R.id.set);
+
+        ImageView btn=findViewById(R.id.button);
+        ImageView set=findViewById(R.id.set);
         DatabaseReference ref= FirebaseDatabase.getInstance().getReference().child("Users").child("Data").child(getIntent().getSerializableExtra("user").toString());
-
-
 
         set.setOnClickListener(view -> {
             TimePickerDialog picker=TimePickerDialog.newInstance(
@@ -63,7 +63,7 @@ public class AddTask extends AppCompatActivity {
 
                 Data data = new Data.Builder()
                         .putString("number", "+91"+num)
-                        .putString("Text", text1 + ".  ")
+                        .putString("Text", text1 + "   ")
                         .putString("time", time_of_exe)
                         .putString("user",getIntent().getSerializableExtra("user").toString())
                         .build();
@@ -76,7 +76,7 @@ public class AddTask extends AppCompatActivity {
                         ExistingPeriodicWorkPolicy.REPLACE, sendMessage);
 
                 ref.child(time_of_exe).setValue(new Task(num, text1, time_of_exe, "Pending"));
-                Toast.makeText(AddTask.this, "Work_Request_Sent", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddTask.this, "Work Request Sent", Toast.LENGTH_LONG).show();
                 finish();
 
             } else {
@@ -98,9 +98,9 @@ public class AddTask extends AppCompatActivity {
         Calendar Cal2=Calendar.getInstance();
         if(Cal2.getTimeInMillis()<call.getTimeInMillis()){
             Cal2.setTimeInMillis(Cal2.getTimeInMillis()+ TimeUnit.DAYS.toMillis(periodInDays));
+
         }
         long delta=(Cal2.getTimeInMillis() - call.getTimeInMillis());
-
         return ((delta> PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS)?delta:PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS);
     }
     private boolean isAppInstalled(String s) {

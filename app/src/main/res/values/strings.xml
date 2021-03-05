@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Whatsapp</string>
+    <string name="num">Excluding (+91)</string>
+    <string name="msg">Your Msg</string>
 </resources>
