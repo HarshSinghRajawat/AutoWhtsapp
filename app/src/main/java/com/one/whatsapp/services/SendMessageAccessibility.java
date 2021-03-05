@@ -3,6 +3,7 @@ package com.one.whatsapp.services;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
@@ -43,10 +44,74 @@ public class SendMessageAccessibility extends AccessibilityService {
 
 
 
-                try {
-                    //Thread.sleep(200);
-                    AccessibilityNodeInfoCompat rootNodeInfo = AccessibilityNodeInfoCompat.wrap(getRootInActiveWindow());
-                    /*
+            try {
+
+                AccessibilityNodeInfoCompat rootNodeInfo = AccessibilityNodeInfoCompat.wrap(getRootInActiveWindow());
+                if(rootNodeInfo==null){return;}
+                List<AccessibilityNodeInfoCompat> messageNodeList= rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/entry");
+
+//                Thread.sleep(500);
+                if (messageNodeList==null||messageNodeList.isEmpty()) {
+                    Log.i(TAG,"MsgField Not Found or Empty");
+                    return;
+                }
+                Log.i(TAG,"MsgField Found!");
+
+
+
+                AccessibilityNodeInfoCompat messageField=messageNodeList.get(0);
+                if(messageField == null|| messageField.getText().length()==0||!messageField.getText().toString().endsWith("   ")) {
+                    Log.i(TAG,"Automation Not Required!");
+                    return;
+                }
+                Log.i(TAG," Automation Required");
+
+                //get Whatsapp send message button
+                List<AccessibilityNodeInfoCompat> sendMessageNodeList = rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/send");
+                if (sendMessageNodeList == null || sendMessageNodeList.isEmpty()) {
+                    Log.i(TAG, "Button Found!");
+                    return;
+                }
+                AccessibilityNodeInfoCompat sendMessage = sendMessageNodeList.get(0);
+                if (!sendMessage.isVisibleToUser()) {
+                    Log.i(TAG, "No Button Found!!");
+                    return;
+                }
+                //press button
+                sendMessage.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                Log.i(TAG, "Button Pressed:"+sendMessage);
+                Thread.sleep(200);
+                performGlobalAction(GLOBAL_ACTION_BACK);
+                Thread.sleep(200);
+                performGlobalAction(GLOBAL_ACTION_HOME);
+            } catch (InterruptedException e) {
+                Log.i(TAG,e+"");
+            }
+            //}
+        }
+    }
+
+    @Override
+    public void onInterrupt()
+    {
+        Log.v(TAG, "Service onInterrupt");
+    }
+
+    @Override
+    public void onServiceConnected()
+    {
+        Log.v(TAG, "Service onServiceConnected");
+        AccessibilityServiceInfo info = new AccessibilityServiceInfo();
+        info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+        info.notificationTimeout = 100;
+        info.feedbackType = AccessibilityEvent.TYPES_ALL_MASK;
+        setServiceInfo(info);
+
+    }
+
+
+}
+/*
                     Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("Sahil"));
                     Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("ACC Project"));
                     Log.i(TAG, "" + rootNodeInfo.findAccessibilityNodeInfosByText("ACC -Core Team (2nd Year)"));
@@ -78,65 +143,3 @@ public class SendMessageAccessibility extends AccessibilityService {
 
                 }
                 ///////////////////////////////////////////////////////////*/
-                //get edit text
-
-
-                List<AccessibilityNodeInfoCompat> messageNodeList= rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/entry");
-
-                if (messageNodeList==null||messageNodeList.isEmpty()) {
-                    Log.i(TAG,"MsgField Not Found or Empty");
-                    return;
-                }
-                Log.i(TAG,"MsgField Found!");
-                AccessibilityNodeInfoCompat messageField=messageNodeList.get(0);
-                if(messageField == null|| messageField.getText().length()==0||!messageField.getText().toString().endsWith(".  ")) {
-                    Log.i(TAG,"Automation Not Required!");
-                    return;
-                }
-                Log.i(TAG," Automation Required");
-
-                //get Whatsapp send message button
-                List<AccessibilityNodeInfoCompat> sendMessageNodeList = rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/send");
-                if (sendMessageNodeList == null || sendMessageNodeList.isEmpty()) {
-                    Log.i(TAG, "Button Found!");
-                    return;
-                }
-                AccessibilityNodeInfoCompat sendMessage = sendMessageNodeList.get(0);
-                if (!sendMessage.isVisibleToUser()) {
-                    Log.i(TAG, "No Button Found!!");
-                    return;
-                }
-                //press button
-                sendMessage.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                Log.i(TAG, "Button Pressed:"+sendMessage);
-                Thread.sleep(200);
-                performGlobalAction(GLOBAL_ACTION_BACK);
-                Thread.sleep(200);
-                performGlobalAction(GLOBAL_ACTION_HOME);
-                } catch (InterruptedException e) {
-                    Log.i(TAG,e+"");
-                }
-            //}
-        }
-    }
-
-    @Override
-    public void onInterrupt()
-    {
-        Log.v(TAG, "Service onInterrupt");
-    }
-
-    @Override
-    public void onServiceConnected()
-    {
-        Log.v(TAG, "Service onServiceConnected");
-        AccessibilityServiceInfo info = new AccessibilityServiceInfo();
-        info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
-        info.notificationTimeout = 100;
-        info.feedbackType = AccessibilityEvent.TYPES_ALL_MASK;
-        setServiceInfo(info);
-
-    }
-
-
-}
