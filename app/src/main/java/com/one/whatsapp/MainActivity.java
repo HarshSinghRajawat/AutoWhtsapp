@@ -108,7 +108,7 @@ private String user;
         AccessibilityService.putExtra("msg",text);
         AccessibilityService.putExtra("boolean",true);
         startService(AccessibilityService);
-
+        //h
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         try {
