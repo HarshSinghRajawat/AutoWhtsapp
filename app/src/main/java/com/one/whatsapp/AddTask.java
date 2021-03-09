@@ -3,21 +3,27 @@ package com.one.whatsapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.Data;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ListenableWorker;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
@@ -33,7 +39,9 @@ public class AddTask extends AppCompatActivity {
 
         ImageView btn=findViewById(R.id.button);
         ImageView set=findViewById(R.id.set);
+        Switch sendNow=findViewById(R.id.sendNow);
         DatabaseReference ref= FirebaseDatabase.getInstance().getReference().child("Users").child("Data").child(getIntent().getSerializableExtra("user").toString());
+
 
         set.setOnClickListener(view -> {
             TimePickerDialog picker=TimePickerDialog.newInstance(
@@ -56,10 +64,26 @@ public class AddTask extends AppCompatActivity {
             String num = number.toString();
             String text1 = msg.toString() ;
 
-            if((hr!=100&&sec!=100)&&(!num.isEmpty()&&!text1.isEmpty())){
+            if(sendNow.isEnabled()&&(!num.isEmpty()&&!text1.isEmpty())){
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                try {
+                    intent.setData(Uri.parse("http://api.whatsapp.com/send?phone=+91"+num+"&text="+ URLEncoder.encode(text1,"UTF-8")+"   "));
+                    intent.setPackage("com.whatsapp");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getApplicationContext().startActivity(intent);
+                    ref.child("Instantly").setValue(new Task(num,text1,"Instantly","Success"));
+                    finish();
+                    return ;
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    return ;
+                }
+            }else if((hr!=100&&sec!=100)&&(!num.isEmpty()&&!text1.isEmpty())){
             boolean installed = isAppInstalled("com.whatsapp");
 
             if (installed) {
+
+
 
                 Data data = new Data.Builder()
                         .putString("number", "+91"+num)
